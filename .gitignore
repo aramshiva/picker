@@ -1,0 +1,6 @@
+.env
+.env.local
+.nova
+node_modules
+package-lock.json
+.DS_Store
