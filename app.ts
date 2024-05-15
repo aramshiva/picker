@@ -8,7 +8,7 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
 });
 
-app.command("/picker", async ({ command, ack, client, body }) => {
+app.command("/pick", async ({ command, ack, client, body }) => {
   await ack();
 
   try {
