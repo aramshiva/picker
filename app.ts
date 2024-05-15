@@ -50,7 +50,7 @@ app.command("/pick", async ({ command, ack, client, body }) => {
 app.view("pick", async ({ ack, body, client }) => {
   await ack();
 
-  const channel = "C0737AAH0H3";
+  const channel = body.channel.id;
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
 
@@ -69,7 +69,7 @@ app.view("pick", async ({ ack, body, client }) => {
   try {
     await client.chat.postMessage({
       channel: channel,
-      text: `<@${picked}> You have been picked for ${reason}`,
+      text: `Hey<@${picked}>! You have been picked for ${reason}`,
     });
   } catch (error) {
     console.log(error);
