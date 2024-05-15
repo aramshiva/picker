@@ -50,7 +50,7 @@ app.command("/pick", async ({ command, ack, client, body }) => {
 app.view("pick", async ({ ack, body, client }) => {
   await ack();
 
-  const channel = body.channel.id;
+  const channel = body.channel;
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
 
