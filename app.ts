@@ -53,12 +53,12 @@ app.command("/pick", async ({ command, ack, client, body }: any) => {
 app.view("pick", async ({ ack, body, client }: any) => {
   await ack();
 
-  const channel = JSON.parse(body.view.private_metadata)[0];
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
   const user = JSON.parse(body.view.private_metadata)[1];
 
   try {
+    const channel = JSON.parse(body.view.private_metadata)[0];
     const result = await app.client.conversations.members({ channel });
     const members = result.members;
 
