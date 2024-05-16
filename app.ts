@@ -11,8 +11,6 @@ const app = new App({
 app.command("/pick", async ({ command, ack, client, body }: any) => {
   await ack();
 
-  const channel = body.channel_id;
-  const user = body.user_id;
   try {
     const result = await client.views.open({
       trigger_id: body.trigger_id,
@@ -23,7 +21,7 @@ app.command("/pick", async ({ command, ack, client, body }: any) => {
           type: "plain_text",
           text: "Picker",
         },
-        private_metadata: JSON.stringify({ channel, body }),
+        private_metadata: body.channel_id,
         blocks: [
           {
             type: "input",
@@ -52,13 +50,11 @@ app.command("/pick", async ({ command, ack, client, body }: any) => {
 
 app.view("pick", async ({ ack, body, client }: any) => {
   await ack();
-
+  const channel = body.view.private_metadata;
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
-  const user = JSON.parse(body.view.private_metadata)[1];
 
   try {
-    const channel = JSON.parse(body.view.private_metadata)[0];
     const result = await app.client.conversations.members({ channel });
     const members = result.members;
 
@@ -66,7 +62,7 @@ app.view("pick", async ({ ack, body, client }: any) => {
 
     await client.chat.postMessage({
       channel: channel,
-      text: `Hey <@${picked}>! You have been picked for ${reason} by <@${user}>`,
+      text: `Hey <@${picked}>! You have been picked for ${reason}`,
     });
   } catch (error) {
     console.error("Failed to pick a member:", error);
