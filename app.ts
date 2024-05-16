@@ -11,6 +11,8 @@ const app = new App({
 app.command("/pick", async ({ command, ack, client, body }: any) => {
   await ack();
 
+  const channel = body.channel_id;
+  const user = body.user_id;
   try {
     const result = await client.views.open({
       trigger_id: body.trigger_id,
@@ -21,7 +23,7 @@ app.command("/pick", async ({ command, ack, client, body }: any) => {
           type: "plain_text",
           text: "Picker",
         },
-        private_metadata: body.channel_id,
+        private_metadata: JSON.stringify({ channel, body }),
         blocks: [
           {
             type: "input",
@@ -51,11 +53,10 @@ app.command("/pick", async ({ command, ack, client, body }: any) => {
 app.view("pick", async ({ ack, body, client }: any) => {
   await ack();
 
-  const channel = body.view.private_metadata;
+  const channel = JSON.parse(body.view.private_metadata)[0];
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
-  const user = app.client.users.identity;
-  console.log(user);
+  const user = JSON.parse(body.view.private_metadata)[1];
 
   try {
     const result = await app.client.conversations.members({ channel });
