@@ -4,11 +4,11 @@ require("dotenv").config();
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
-  socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
+  socketMode: true,
 });
 
-app.command("/pick", async ({ command, ack, client, body }) => {
+app.command("/pick", async ({ command, ack, client, body }: any) => {
   await ack();
 
   try {
@@ -21,6 +21,7 @@ app.command("/pick", async ({ command, ack, client, body }) => {
           type: "plain_text",
           text: "Picker",
         },
+        private_metadata: body.channel_id,
         blocks: [
           {
             type: "input",
@@ -47,38 +48,49 @@ app.command("/pick", async ({ command, ack, client, body }) => {
   }
 });
 
-app.view("pick", async ({ ack, body, client }) => {
+app.view("pick", async ({ ack, body, client }: any) => {
   await ack();
 
-  const channel = body.channel;
+  const channel = body.view.private_metadata;
+  // const channel = "C0737AAH0H3";
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
 
-  const response = await fetch(
-    `https://slack.com/api/conversations.members?channel=${channel}&limit=100&pretty=1`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const members = JSON.parse(await response.text()).members;
-  const picked = members[Math.floor(Math.random() * members.length)];
-
   try {
+    const result = await app.client.conversations.members({ channel });
+    const members = result.members;
+
+    const picked = members[Math.floor(Math.random() * members.length)];
+
     await client.chat.postMessage({
       channel: channel,
-      text: `Hey<@${picked}>! You have been picked for ${reason}`,
+      text: `Hey <@${picked}>! You have been picked for ${reason}`,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Failed to pick a member:", error);
   }
 });
 
 (async () => {
-  // Start your app
   await app.start(process.env.PORT || 3000);
-
   console.log("⚡️ Bolt app is running!");
 })();
+
+// example response:
+// {
+//     "ok": true,
+//     "members": [
+//         "U01MPHKFZ7S",
+//         "U043Q05KFAA",
+//         "U04FATFRE6T",
+//         "U05JX2BHANT",
+//         "U05NX48GL3T",
+//         "U05QJ4CF5QT",
+//         "U0616280E6P",
+//         "U06LWT5MHGQ",
+//         "U07373D8R7X"
+//     ],
+//     "response_metadata": {
+//         "next_cursor": ""
+//     }
+// }
