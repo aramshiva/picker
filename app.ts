@@ -52,9 +52,9 @@ app.view("pick", async ({ ack, body, client }: any) => {
   await ack();
 
   const channel = body.view.private_metadata;
-  // const channel = "C0737AAH0H3";
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
+  const user = app.client.users.identity;
 
   try {
     const result = await app.client.conversations.members({ channel });
@@ -64,7 +64,7 @@ app.view("pick", async ({ ack, body, client }: any) => {
 
     await client.chat.postMessage({
       channel: channel,
-      text: `Hey <@${picked}>! You have been picked for ${reason}`,
+      text: `Hey <@${picked}>! You have been picked for ${reason} by <@${user}>`,
     });
   } catch (error) {
     console.error("Failed to pick a member:", error);
