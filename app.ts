@@ -54,7 +54,8 @@ app.view("pick", async ({ ack, body, client }: any) => {
   const channel = body.view.private_metadata;
   const values = body.view.state.values;
   const reason = values.input.reason_input.value;
-  const user = app.client.users.identity.user;
+  const user = app.client.users.identity;
+  console.log(user);
 
   try {
     const result = await app.client.conversations.members({ channel });
