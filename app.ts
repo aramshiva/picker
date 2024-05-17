@@ -8,7 +8,7 @@ const app = new App({
   socketMode: true,
 });
 
-app.command("/pick", async ({ command, ack, client, body }: any) => {
+app.command("/dev-pick", async ({ command, ack, client, body }: any) => {
   await ack();
 
   const metadata_to_send = { channel: body.channel_id, user: body.user_id };
@@ -62,6 +62,30 @@ app.view("pick", async ({ ack, body, client }: any) => {
   try {
     const result = await app.client.conversations.members({ channel });
     const members = result.members;
+
+    let toremove = [];
+    for (let member in members) {
+      let m = members[member];
+      try {
+        const result = await client.users.info({
+          user: m,
+        });
+
+        if (result.user.is_bot) {
+          toremove.push(member);
+          // why append to another array and THEN delete? Because
+          // if you delete in a for in loop where the in is what
+          // for is what your removing you will skip over results
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    for (const remove in toremove) {
+      // bot removal code
+      members.pop(remove);
+    }
 
     const picked = members[Math.floor(Math.random() * members.length)];
 
