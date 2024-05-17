@@ -98,22 +98,3 @@ app.view("pick", async ({ ack, body, client }: any) => {
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
 })();
-
-// example response:
-// {
-//     "ok": true,
-//     "members": [
-//         "U01MPHKFZ7S",
-//         "U043Q05KFAA",
-//         "U04FATFRE6T",
-//         "U05JX2BHANT",
-//         "U05NX48GL3T",
-//         "U05QJ4CF5QT",
-//         "U0616280E6P",
-//         "U06LWT5MHGQ",
-//         "U07373D8R7X"
-//     ],
-//     "response_metadata": {
-//         "next_cursor": ""
-//     }
-// }
