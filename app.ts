@@ -11,7 +11,6 @@ const app = new App({
 app.command("/pick", async ({ command, ack, client, body }: any) => {
   await ack();
 
-  console.log(body.user_id + " picked a random person!");
   const metadata_to_send = { channel: body.channel_id, user: body.user_id };
   const metadata = JSON.stringify(metadata_to_send);
 
