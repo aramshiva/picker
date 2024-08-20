@@ -8,7 +8,7 @@ const app = new App({
   socketMode: true,
 });
 
-app.command("/pick", async ({ command, ack, client, body }: any) => {
+app.command("/picker", async ({ command, ack, client, body }: any) => {
   await ack();
 
   const metadata_to_send = { channel: body.channel_id, user: body.user_id };
